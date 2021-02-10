@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "1012035480665",
+    "firebase_url": "https://pocketmoney-21f97.firebaseio.com",
+    "project_id": "pocketmoney-21f97",
+    "storage_bucket": "pocketmoney-21f97.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1012035480665:android:890868cec4fc7747",
+        "android_client_info": {
+          "package_name": "com.yeo.pocketmoney"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1012035480665-7d4pvsmenovtu129l8i0oi2j0919tgd2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnxxJ3llQGXE1b6s7m4BhYYJdTWCayfOY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1012035480665-7d4pvsmenovtu129l8i0oi2j0919tgd2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1012035480665-a00dep6eiadi4at3vovcuek99e5agbsk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.yeo.pocketmoney"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1012035480665:android:41af32b6ed581bf8",
+        "android_client_info": {
+          "package_name": "com.yeo.pocketmoney.sx"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1012035480665-7d4pvsmenovtu129l8i0oi2j0919tgd2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnxxJ3llQGXE1b6s7m4BhYYJdTWCayfOY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1012035480665-7d4pvsmenovtu129l8i0oi2j0919tgd2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1012035480665-a00dep6eiadi4at3vovcuek99e5agbsk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.yeo.pocketmoney"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
