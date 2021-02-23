@@ -11,7 +11,8 @@ class User {
 const UserIdKey = 'UserId';
 
 class AuthRepo {
-  final _logger = createLogger('FirebaseAuthRepo');
+  static const diKey = 'AuthRepo';
+  final _logger = createLogger(diKey);
   final FirebaseAuth _firebaseAuth;
 
   User cacheUser;
@@ -19,17 +20,14 @@ class AuthRepo {
   AuthRepo(FirebaseApp app)
       : _firebaseAuth = FirebaseAuth.instanceFor(app: app);
 
-  User getUser() {
-    if (cacheUser == null) {
-      throw new UserNotFoundException();
-    }
-    return cacheUser;
-  }
-
   Future<User> isUserSignIn() async {
     if (_firebaseAuth.currentUser == null) return null;
     final user = _firebaseAuth.currentUser;
-    _logger.i({'userid': user.uid, 'msg': 'user is signed In'});
+    _logger.i({
+      'userid': user.uid,
+      'msg': 'user is signed In',
+      'isAnonymous': user.isAnonymous
+    });
     cacheUser = User(id: user.uid);
     return cacheUser;
   }
@@ -75,10 +73,20 @@ class AuthRepo {
     }
   }
 
+  Future resetPassword(String email) async {
+    try {
+      final a = _firebaseAuth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (err) {
+      _logger.e(err);
+
+      throw UnknownException(message: err.code);
+    } catch (err) {
+      _logger.e(err);
+      throw UnknownException();
+    }
+  }
+
   Future signOut() async {
-    _logger.i('signOut');
-    cacheUser = null;
     await _firebaseAuth.signOut();
-    _logger.i('signOut done');
   }
 }

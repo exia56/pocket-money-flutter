@@ -4,11 +4,11 @@ import 'package:pocket_money/view-models/index.dart';
 import 'package:pocket_money/utils/logger.dart';
 import 'package:pocket_money/views/index.dart';
 
-class SignInView extends StatefulWidget {
-  static const route = 'SignInView';
+class SyncDataView extends StatefulWidget {
+  static const route = 'SyncDataView';
 
   @override
-  State<StatefulWidget> createState() => SignInState();
+  State<StatefulWidget> createState() => SyncDataState();
 }
 
 Widget _rowCreation(String field, TextEditingController controller) {
@@ -39,9 +39,9 @@ Widget _rowCreation(String field, TextEditingController controller) {
   );
 }
 
-class SignInState extends State<SignInView> {
+class SyncDataState extends State<SyncDataView> {
   final _userViewModel = DI.instance.get<UserViewModel>(UserViewModel.diKey);
-  final _logger = createLogger('SignInState');
+  final _logger = createLogger('SyncDataState');
 
   var _error = '';
 
@@ -116,6 +116,7 @@ class SignInState extends State<SignInView> {
   @override
   void dispose() {
     super.dispose();
+    _userViewModel.signOut();
     _userViewModel.dispose();
   }
 }

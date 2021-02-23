@@ -35,7 +35,7 @@ class TagPrinter extends LogPrinter {
     if (message is Map) {
       return _jsonEncoder.convert(message);
     }
-    return message.toString();
+    return message.toString().replaceAll('\\', '\\\\');
   }
 }
 

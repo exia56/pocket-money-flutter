@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:pocket_money/exceptions.dart';
 import 'package:pocket_money/services/index.dart';
 
-class UserViewModel {
-  static const diKey = 'UserViewModel';
+class SyncViewModel {
+  static const diKey = 'SyncViewModel';
   final UserService _userService;
 
   final _errController = StreamController<String>.broadcast();
@@ -13,9 +13,9 @@ class UserViewModel {
   final emailTextEditingController = TextEditingController();
   final passwordTextEditingController = TextEditingController();
 
-  UserViewModel(this._userService);
+  SyncViewModel(this._userService);
 
-  void signIn() {
+  signIn() {
     final email = emailTextEditingController.text;
     final password = passwordTextEditingController.text;
 
@@ -30,7 +30,7 @@ class UserViewModel {
     });
   }
 
-  void signUp() {
+  signUp() {
     final email = emailTextEditingController.text;
     final password = passwordTextEditingController.text;
 
@@ -45,11 +45,11 @@ class UserViewModel {
     });
   }
 
-  void signOut() {
+  signOut() {
     _userService.signOut();
   }
 
-  void dispose() {
+  dispose() {
     _errController.close();
   }
 }

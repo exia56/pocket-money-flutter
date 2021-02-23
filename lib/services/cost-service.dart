@@ -1,31 +1,16 @@
+import 'package:intl/intl.dart';
+import 'package:pocket_money/models/index.dart';
 import 'package:pocket_money/repos/index.dart';
 import 'package:pocket_money/utils/index.dart';
 
-class DayItem {
-  final DateTime date;
-  final List<CostItem> items;
-
-  DayItem(this.date, this.items);
-  double get amount {
-    double f = 0;
-    items?.forEach((item) {
-      f += item.amount;
-    });
-    return f;
-  }
-}
-
-int _dateToDateStamp(DateTime date) {
-  return date.year * 10000 + date.month * 100 + date.day;
-}
+final yyyyMMddFormator = DateFormat('yyyy-MM-dd');
 
 class CostService {
-  final FirestoreRepo _firestoreRepo;
+  static const diKey = 'CostService';
   final CostsRepo _costsRepo;
-  final AuthRepo _authRepo;
-  final _logger = createLogger('CostService');
+  final _logger = createLogger(diKey);
 
-  CostService(this._authRepo, this._firestoreRepo, this._costsRepo);
+  CostService(this._costsRepo);
 
   Future<List<DayItem>> getDailyCosts(DateTime date) async {
     var weekdayCellDatas = List<DayItem>(42);
@@ -37,10 +22,7 @@ class CostService {
     var gridViewStartDate = gridViewEndDate.add(Duration(days: -41));
 
     final result = await _costsRepo.queryBetween(
-        _dateToDateStamp(gridViewStartDate), _dateToDateStamp(gridViewEndDate));
-
-    _logger.i(
-        'start: ${gridViewStartDate.toString()}, end: ${gridViewEndDate.toString()}, length: ${result.length}');
+        gridViewStartDate.toDateStamp(), gridViewEndDate.toDateStamp());
 
     final dateStampMap = <int, List<CostItem>>{};
     result.forEach((cost) {
@@ -54,7 +36,7 @@ class CostService {
 
     for (int offset = 0; offset < 42; offset++) {
       final thisDay = gridViewEndDate.add(Duration(days: offset - 41));
-      final serializeDatestamp = _dateToDateStamp(thisDay);
+      final serializeDatestamp = thisDay.toDateStamp();
       final costItemsOfthisDay = dateStampMap[serializeDatestamp] ?? [];
 
       weekdayCellDatas[offset] = DayItem(thisDay, costItemsOfthisDay);
@@ -64,52 +46,15 @@ class CostService {
   }
 
   Future<List<CostItem>> getSingleDayCost(DateTime date) async {
-    final dateStamp = _dateToDateStamp(date);
+    final dateStamp = date.toDateStamp();
     final results = await _costsRepo.queryBetween(dateStamp, dateStamp);
     return results;
   }
 
-  Future<void> pullFromCloudBetween(DateTime from, DateTime to) async {
-    final fromDateStamp = _dateToDateStamp(from);
-    final toDateStamp = _dateToDateStamp(to);
-
-    final user = _authRepo.getUser();
-
-    final costs = await _firestoreRepo.getCostsBetween(
-      user.id,
-      fromDateStamp,
-      toDateStamp,
-    );
-
-    await _costsRepo.updateOrInsertMany(costs);
-  }
-
-  Future<void> pushToCloudBetween(DateTime from, DateTime to) async {
-    final fromDateStamp = _dateToDateStamp(from);
-    final toDateStamp = _dateToDateStamp(to);
-
-    final user = _authRepo.getUser();
-
-    final costs = await _costsRepo.queryBetween(
-      fromDateStamp,
-      toDateStamp,
-    );
-
-    await _firestoreRepo.updateOrInsertMany(user.id, costs);
-  }
-
   Future<void> updateOrInsertCost(CostItem item) async {
-    final user = _authRepo.getUser();
     if (item.id == null) {
       item.id = randomString(20);
     }
-    await _firestoreRepo.updateOrInsert(user.id, item).catchError(
-          (err) => _logger.i(
-            item,
-            err,
-            StackTrace.current,
-          ),
-        );
     await _costsRepo.updateOrInsert(item).catchError(
           (err) => _logger.i(
             item,
@@ -117,5 +62,9 @@ class CostService {
             StackTrace.current,
           ),
         );
+  }
+
+  Future<void> deleteCost(String id) async {
+    await _costsRepo.delete(id);
   }
 }

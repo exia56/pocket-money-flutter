@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:pocket_money/di-setup.dart';
 import 'package:pocket_money/di.dart';
-import 'package:pocket_money/constant.dart';
 import 'package:pocket_money/view-models/index.dart';
 import 'package:pocket_money/utils/logger.dart';
+import 'package:pocket_money/views/index.dart';
 
 class SignUpView extends StatefulWidget {
+  static const route = 'SignUpView';
+
   @override
   State<StatefulWidget> createState() => SignUpState();
 }
@@ -39,7 +40,7 @@ Widget _rowCreation(String field, TextEditingController controller) {
 }
 
 class SignUpState extends State<SignUpView> {
-  final _userViewModel = DI.instance.get<UserViewModel>(DIKeys.userViewModel);
+  final _userViewModel = DI.instance.get<UserViewModel>(UserViewModel.diKey);
   final _logger = createLogger('SignUpState');
 
   var _error = '';
@@ -51,12 +52,6 @@ class SignUpState extends State<SignUpView> {
       setState(() {
         _error = error;
       });
-    });
-    _userViewModel.isUserSignIn.listen((signedIn) {
-      if (signedIn) {
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil(NamedRouter.main.name, (route) => false);
-      }
     });
   }
 
@@ -91,7 +86,7 @@ class SignUpState extends State<SignUpView> {
               child: Text('去登入'),
               onPressed: () {
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                    NamedRouter.signIn.name, (route) => false);
+                    SignInView.route, (route) => false);
               },
             ),
             RaisedButton(

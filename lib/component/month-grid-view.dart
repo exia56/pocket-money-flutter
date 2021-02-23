@@ -1,6 +1,8 @@
-import 'dart:collection';
-import 'package:pocket_money/services/index.dart';
+import 'package:pocket_money/models/index.dart';
+import 'package:pocket_money/utils/index.dart';
 import 'package:flutter/material.dart';
+
+typedef OnCellPressedHandler = void Function(DateTime);
 
 Widget normalText(String str) {
   return Container(
@@ -36,25 +38,44 @@ Widget weekendText(String str) {
   );
 }
 
-Widget weekdayCell(DayItem data) {
+Widget todayText(String str) {
+  return Container(
+    child: Text(
+      str,
+      style: TextStyle(
+        color: Colors.blue,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  );
+}
+
+Widget weekdayCell(DayItem data, OnCellPressedHandler handler) {
   final isWeekend = data.date.weekday == DateTime.sunday ||
       data.date.weekday == DateTime.saturday;
+  final isToday = data.date.toDateStamp() == DateTime.now().toDateStamp();
   var amountStr = data.amount > 1000
-      ? '${(data.amount / 1000)}k'
+      ? '${(data.amount ~/ 1000)}k'
       : data.amount.toInt().toString();
   return Container(
     decoration: BoxDecoration(border: Border.all(width: 1)),
-    child: Padding(
-      padding: EdgeInsets.all(5),
-      child: Column(
-        children: [
-          Align(
-              alignment: Alignment.topLeft,
-              child: isWeekend
-                  ? weekendText(data.date.day.toString())
-                  : normalText(data.date.day.toString())),
-          Align(alignment: Alignment.bottomRight, child: normalFee(amountStr)),
-        ],
+    child: InkWell(
+      onTap: () => handler(data.date),
+      child: Padding(
+        padding: EdgeInsets.all(5),
+        child: Column(
+          children: [
+            Align(
+                alignment: Alignment.topLeft,
+                child: isToday
+                    ? todayText(data.date.day.toString())
+                    : isWeekend
+                        ? weekendText(data.date.day.toString())
+                        : normalText(data.date.day.toString())),
+            Align(
+                alignment: Alignment.bottomRight, child: normalFee(amountStr)),
+          ],
+        ),
       ),
     ),
   );
@@ -82,10 +103,10 @@ Row headerAggregate(List<String> weekStrs) {
   );
 }
 
-Row weekCellAggregate(List<DayItem> datas) {
+Row weekCellAggregate(List<DayItem> datas, OnCellPressedHandler handler) {
   return Row(
     children: [
-      ...datas.map((e) => Expanded(child: weekdayCell(e))).toList(),
+      ...datas.map((e) => Expanded(child: weekdayCell(e, handler))).toList(),
     ],
   );
 }
@@ -93,18 +114,20 @@ Row weekCellAggregate(List<DayItem> datas) {
 class MonthGridView extends StatelessWidget {
   final List<String> header = ['一', '二', '三', '四', '五', '六', '日'];
   final List<DayItem> cellContent;
-  MonthGridView({@required this.cellContent, Key key})
+  final OnCellPressedHandler _onCellPressedHandler;
+  MonthGridView(this.cellContent, this._onCellPressedHandler, {Key key})
       : assert(cellContent.length == 42,
             'cellContent should be 42 length, get: ${cellContent.length}'),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var gridRows = Queue<Widget>();
-
+    final gridRows = <Widget>[];
     for (int idx = 0; idx < 42; idx += 7) {
-      gridRows.add(weekCellAggregate(cellContent.sublist(idx, idx + 7)));
+      gridRows.add(weekCellAggregate(
+          cellContent.sublist(idx, idx + 7), _onCellPressedHandler));
     }
+
     return Container(
       child: Column(
         children: [

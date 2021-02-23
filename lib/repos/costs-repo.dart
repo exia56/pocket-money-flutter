@@ -1,18 +1,21 @@
-import 'package:pocket_money/repos/firestore-repo.dart';
+import 'package:pocket_money/utils/index.dart';
+import 'package:pocket_money/models/index.dart';
 import 'package:sqflite/sqflite.dart';
 
 class CostsRepo {
+  static const diKey = 'CostsRepo';
   final Database _database;
   final String _tableName = 'Costs';
+  final _logger = createLogger(diKey);
+
   CostsRepo(this._database);
 
   Future<List<CostItem>> queryBetween(int from, int to) async {
     final results = await _database.query(
       _tableName,
-      where: 'dateStamp >= ? & dateStamp <= ?',
+      where: 'dateStamp >= ? AND dateStamp <= ?',
       whereArgs: [from, to],
     );
-
     return results?.map((e) => CostItem.fromMap(e))?.toList();
   }
 

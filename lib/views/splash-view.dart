@@ -1,29 +1,25 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:pocket_money/di-setup.dart';
 import 'package:pocket_money/di.dart';
 import 'package:pocket_money/utils/index.dart';
-import 'package:pocket_money/constant.dart';
 import 'package:pocket_money/services/index.dart';
+import 'package:pocket_money/views/index.dart';
 
 class SplashView extends StatelessWidget {
-  final _logger = createLogger('SplashView');
-  final _initialization = Firebase.initializeApp();
+  static const route = 'SplashView';
 
+  final _logger = createLogger('SplashView');
   Future changeView(BuildContext context) async {
-    final firebaseApp = await _initialization;
-    diSetup(firebaseApp);
     final user =
-        await DI.instance.get<UserService>(DIKeys.userService).isUserSignedIn();
+        await DI.instance.get<UserService>(UserService.diKey).isUserSignedIn();
     if (user == null) {
       _logger.i('not user exists');
       Navigator.of(context)
-          .pushNamedAndRemoveUntil(NamedRouter.signIn.name, (route) => false);
+          .pushNamedAndRemoveUntil(SignInView.route, (route) => false);
     } else {
       Navigator.of(context)
-          .pushNamedAndRemoveUntil(NamedRouter.main.name, (route) => false);
+          .pushNamedAndRemoveUntil(MainView.route, (route) => false);
     }
   }
 

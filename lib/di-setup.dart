@@ -6,57 +6,45 @@ import 'package:pocket_money/view-models/index.dart';
 import 'package:pocket_money/view-models/user-view-model.dart';
 import 'package:sqflite/sqflite.dart';
 
-class DIKeys {
-  static const database = 'db';
+const databaseDIKey = 'db';
 
-  static const authRepo = 'authRepo';
-  static const firestoreRepo = 'firestoreRepo';
-  static const costsRepo = 'costsRepo';
-
-  static const dateService = 'dateService';
-  static const userService = 'userService';
-
-  static const mainViewModel = 'mainViewModel';
-  static const userViewModel = 'userViewModel';
-
-  DIKeys._();
-}
-
-void diSetup(FirebaseApp firebaseApp) {
-  DI.instance.register(DIKeys.authRepo, () => AuthRepo(firebaseApp));
-  DI.instance.register(DIKeys.firestoreRepo, () => FirestoreRepo(firebaseApp));
+void diSetup(FirebaseApp firebaseApp, Database database) {
+  DI.instance.register(databaseDIKey, () => database);
+  DI.instance.register(AuthRepo.diKey, () => AuthRepo(firebaseApp));
+  DI.instance.register(FirestoreRepo.diKey, () => FirestoreRepo(firebaseApp));
   DI.instance.register(
-    DIKeys.costsRepo,
+    CostsRepo.diKey,
     ({Database db}) => CostsRepo(db),
-    namedParameter: {'db': DIKeys.database},
+    namedParameter: {'db': databaseDIKey},
   );
 
   DI.instance.register(
-    DIKeys.userService,
+    UserService.diKey,
     ({AuthRepo authRepo}) => UserService(authRepo),
-    namedParameter: {'authRepo': DIKeys.authRepo},
+    namedParameter: {'authRepo': AuthRepo.diKey},
   );
   DI.instance.register(
-    DIKeys.dateService,
-    ({FirestoreRepo firestoreRepo, AuthRepo authRepo, CostsRepo costsRepo}) =>
-        CostService(authRepo, firestoreRepo, costsRepo),
-    namedParameter: {
-      'firestoreRepo': DIKeys.firestoreRepo,
-      'authRepo': DIKeys.authRepo,
-      'costsRepo': DIKeys.costsRepo,
-    },
+    CostService.diKey,
+    ({CostsRepo costsRepo}) => CostService(costsRepo),
+    namedParameter: {'costsRepo': CostsRepo.diKey},
   );
 
   DI.instance.register(
-    DIKeys.userViewModel,
+    UserViewModel.diKey,
     ({UserService userService}) => UserViewModel(userService),
-    namedParameter: {'userService': DIKeys.userService},
+    namedParameter: {'userService': UserService.diKey},
     alwaysNew: true,
   );
   DI.instance.register(
-    DIKeys.mainViewModel,
+    MainViewModel.diKey,
     ({CostService costService}) => MainViewModel(costService),
-    namedParameter: {'costService': DIKeys.dateService},
+    namedParameter: {'costService': CostService.diKey},
+    alwaysNew: true,
+  );
+  DI.instance.register(
+    CostViewModel.diKey,
+    ({CostService costService}) => CostViewModel(costService),
+    namedParameter: {'costService': CostService.diKey},
     alwaysNew: true,
   );
 }

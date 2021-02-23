@@ -1,69 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:pocket_money/repos/index.dart';
+import 'package:pocket_money/models/index.dart';
 import 'package:pocket_money/utils/logger.dart';
 import 'dart:async';
 
-int tryCastToInt(dynamic value) {
-  if (value is int || value is double) {
-    return value.toInt();
-  }
-  return 0;
-}
-
-class CostItem {
-  String id;
-  int amount;
-  int dateStamp;
-  int day;
-  String detail;
-  int month;
-  int type;
-  int year;
-
-  CostItem(
-    this.id,
-    this.amount,
-    this.dateStamp,
-    this.day,
-    this.detail,
-    this.month,
-    this.type,
-    this.year,
-  );
-
-  CostItem.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
-    amount = tryCastToInt(map['amount']);
-    dateStamp = tryCastToInt(map['dateStamp']);
-    day = tryCastToInt(map['day']);
-    detail = map['detail'];
-    month = tryCastToInt(map['month']);
-    type = tryCastToInt(map['type']);
-    year = tryCastToInt(map['year']);
-  }
-
-  @override
-  String toString() {
-    return 'id= $id, amount= $amount, detail=$detail';
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'amount': amount,
-      'dateStamp': dateStamp,
-      'day': day,
-      'detail': detail,
-      'month': month,
-      'type': type,
-      'year': year,
-    };
-  }
-}
-
 class FirestoreRepo {
-  final _logger = createLogger('FirebstoreRepo');
+  static const diKey = 'FirestoreRepo';
+  final _logger = createLogger(diKey);
   final FirebaseFirestore _instance;
 
   FirestoreRepo(FirebaseApp app)

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pocket_money/constant.dart';
-import 'package:pocket_money/di-setup.dart';
 import 'package:pocket_money/di.dart';
 import 'package:pocket_money/services/index.dart';
 
@@ -20,7 +18,9 @@ Widget settingRow(String str, Function onPress) {
 }
 
 class SettingView extends StatelessWidget {
-  final _userService = DI.instance.get<UserService>(DIKeys.userService);
+  static const route = 'SettingView';
+
+  final _userService = DI.instance.get<UserService>(UserService.diKey);
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +31,9 @@ class SettingView extends StatelessWidget {
         body: Column(
           children: [
             settingRow('登入', () {
-              _userService.signOut().then((v) => Navigator.of(context)
-                  .pushNamedAndRemoveUntil(
-                      NamedRouter.splash.name, (route) => false));
+              // _userService.signOut().then((v) => Navigator.of(context)
+              //     .pushNamedAndRemoveUntil(
+              //         NamedRouter.splash.name, (route) => false));
             })
           ],
         ));
