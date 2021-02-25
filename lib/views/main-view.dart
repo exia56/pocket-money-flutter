@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pocket_money/component/index.dart';
 import 'package:pocket_money/component/month-grid-view.dart';
-import 'package:pocket_money/constant.dart';
 import 'package:pocket_money/models/index.dart';
 import 'package:pocket_money/utils/index.dart';
 import 'package:pocket_money/view-models/main-view-model.dart';
 import 'package:pocket_money/di.dart';
 import 'package:pocket_money/views/index.dart';
+
+import 'index.dart';
 
 class MainView extends StatefulWidget {
   static const route = 'MainView';
@@ -44,8 +45,8 @@ class MainViewState extends State<MainView> {
     mainViewModel.getDateFees(showDate);
   }
 
-  void onCellPress(DateTime date) async {
-    await Navigator.of(context).pushNamed(SingleDayView.route, arguments: date);
+  void onCellPress(SingleDayArrguments args) async {
+    await Navigator.of(context).pushNamed(SingleDayView.route, arguments: args);
     mainViewModel.getDateFees(showDate);
   }
 
@@ -75,7 +76,10 @@ class MainViewState extends State<MainView> {
               ? Center(child: CircularProgressIndicator())
               : Column(
                   children: [
-                    MonthGridView(dayItems, onCellPress),
+                    MonthGridView(
+                      dayItems,
+                      onCellPress,
+                    ),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 5),
                       child: Row(
@@ -122,7 +126,7 @@ class MainViewState extends State<MainView> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         '月花費:',
-                        style: Theme.of(context).textTheme.bodyText1.copyWith(
+                        style: Theme.of(context).textTheme.bodyText1?.copyWith(
                               color: Theme.of(context).accentColor,
                             ),
                       ),

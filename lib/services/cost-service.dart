@@ -13,7 +13,6 @@ class CostService {
   CostService(this._costsRepo);
 
   Future<List<DayItem>> getDailyCosts(DateTime date) async {
-    var weekdayCellDatas = List<DayItem>(42);
     var monthEndAt = DateTime(date.year, date.month + 1, 0);
     var startWeekday = monthEndAt.weekday;
     var endWeekdayOffset = DateTime.sunday - startWeekday;
@@ -28,19 +27,19 @@ class CostService {
     result.forEach((cost) {
       var list = dateStampMap[cost.dateStamp];
       if (list == null) {
-        dateStampMap[cost.dateStamp] = List<CostItem>();
+        dateStampMap[cost.dateStamp] = <CostItem>[];
         list = dateStampMap[cost.dateStamp];
       }
-      list.add(cost);
+      list!.add(cost);
     });
 
-    for (int offset = 0; offset < 42; offset++) {
+    var weekdayCellDatas = List<DayItem>.generate(42, (offset) {
       final thisDay = gridViewEndDate.add(Duration(days: offset - 41));
       final serializeDatestamp = thisDay.toDateStamp();
       final costItemsOfthisDay = dateStampMap[serializeDatestamp] ?? [];
 
-      weekdayCellDatas[offset] = DayItem(thisDay, costItemsOfthisDay);
-    }
+      return DayItem(thisDay, costItemsOfthisDay);
+    });
 
     return weekdayCellDatas;
   }

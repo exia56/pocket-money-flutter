@@ -11,7 +11,7 @@ class InsertCostView extends StatefulWidget {
 
   final CostItem cost;
 
-  InsertCostView(this.cost) : assert(cost != null, 'cost must not be null');
+  InsertCostView(this.cost);
 
   @override
   State<StatefulWidget> createState() => InsertCostState(cost);
@@ -22,18 +22,18 @@ class InsertCostState extends State<InsertCostView> {
   final _logger = createLogger(InsertCostView.route);
 
   var _error = '';
-  final CostItem cost;
+  final CostItem? cost;
   DateTime date = DateTime.now();
   final amountController = TextEditingController();
   final detailController = TextEditingController();
-  CostType type;
+  late CostType type;
   final bool isInsert;
 
-  InsertCostState(this.cost) : isInsert = cost.id == null {
-    date = DateTimeEX.fromDateStamp(cost.dateStamp);
-    amountController.text = cost.amount.toString();
-    detailController.text = cost.detail;
-    type = cost.type;
+  InsertCostState(this.cost) : isInsert = cost?.id == null {
+    date = DateTimeEX.fromDateStamp(cost?.dateStamp ?? 0);
+    amountController.text = cost?.amount.toString() ?? '';
+    detailController.text = cost?.detail ?? '';
+    type = cost?.type ?? CostType.Breakfast;
   }
 
   @override
@@ -111,9 +111,11 @@ class InsertCostState extends State<InsertCostView> {
                           DateTime.now().subtract(Duration(days: 2 * 365)),
                       lastDate: DateTime.now().add(Duration(days: 7)),
                     );
-                    setState(() {
-                      date = newDate;
-                    });
+                    if (newDate != null) {
+                      setState(() {
+                        date = newDate;
+                      });
+                    }
                   },
                   child: Text(
                     date.toYYYYMMDD(),
@@ -130,9 +132,11 @@ class InsertCostState extends State<InsertCostView> {
                     isExpanded: true,
                     isDense: true,
                     onChanged: (newType) {
-                      setState(() {
-                        type = newType;
-                      });
+                      if (newType != null) {
+                        setState(() {
+                          type = newType;
+                        });
+                      }
                     },
                     items: CostType.values
                         .map(
@@ -177,8 +181,7 @@ class InsertCostState extends State<InsertCostView> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    FlatButton.icon(
-                      color: Theme.of(context).primaryColor,
+                    TextButton.icon(
                       icon: Icon(isInsert ? Icons.add : Icons.edit),
                       label: Text(
                         isInsert ? '新增' : '修改',
@@ -193,25 +196,25 @@ class InsertCostState extends State<InsertCostView> {
                           'year': date.year,
                           'month': date.month,
                           'day': date.day,
-                          'id': cost.id,
+                          'id': cost?.id,
                         }));
                       },
                     ),
                     isInsert
                         ? Container()
-                        : FlatButton.icon(
-                            color: Colors.blueGrey.shade300,
+                        : TextButton.icon(
                             icon: Icon(Icons.delete),
                             label: Text(
                               '刪除',
                               style: Theme.of(context).textTheme.bodyText2,
                             ),
                             onPressed: () {
-                              _costViewModel.deleteCost(cost.id);
+                              if (cost != null && cost!.id != null) {
+                                _costViewModel.deleteCost(cost!.id!);
+                              }
                             },
                           ),
-                    FlatButton.icon(
-                      color: Colors.blueGrey.shade300,
+                    TextButton.icon(
                       icon: Icon(Icons.cancel),
                       label: Text(
                         '取消',

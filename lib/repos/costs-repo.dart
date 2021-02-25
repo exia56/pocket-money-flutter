@@ -16,10 +16,10 @@ class CostsRepo {
       where: 'dateStamp >= ? AND dateStamp <= ?',
       whereArgs: [from, to],
     );
-    return results?.map((e) => CostItem.fromMap(e))?.toList();
+    return results.map((e) => CostItem.fromMap(e)).toList();
   }
 
-  Future<CostItem> query(String id) async {
+  Future<CostItem?> query(String id) async {
     final result = await _database.query(_tableName,
         where: 'id = ?', whereArgs: [id], limit: 1);
 

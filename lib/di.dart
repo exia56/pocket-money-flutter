@@ -26,8 +26,8 @@ class DependencyTypeNotMatchException implements Exception {
 }
 
 class _DIMapValue {
-  final List<String> dependencyList;
-  final Map<String, String> dependencyNamed;
+  final List<String>? dependencyList;
+  final Map<String, String>? dependencyNamed;
   final dynamic builder;
   final Type type;
   final bool alwaysNew;
@@ -41,11 +41,11 @@ class _DIMapValue {
 }
 
 class DI {
-  static DI _instance;
+  static DI? _instance;
 
   static DI get instance {
     _instance ??= DI._();
-    return _instance;
+    return _instance!;
   }
 
   DI._();
@@ -58,8 +58,8 @@ class DI {
   void register<T>(
     String key,
     Function builder, {
-    List<String> positionalParameter,
-    Map<String, String> namedParameter,
+    List<String>? positionalParameter,
+    Map<String, String>? namedParameter,
     bool alwaysNew = false,
   }) {
     _dependencyMap[key] =

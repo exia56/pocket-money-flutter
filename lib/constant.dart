@@ -28,3 +28,8 @@ CostType costTypeFrom(int type) {
   }
   return CostType.values[type];
 }
+
+enum HeroTag {
+  ToSingleDay,
+  ToInsert,
+}

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class SimpleScrollView extends StatelessWidget {
   final Widget _child;
-  SimpleScrollView({Key key, Widget child})
+  SimpleScrollView({Key? key, required Widget child})
       : _child = child,
         super(key: key);
 

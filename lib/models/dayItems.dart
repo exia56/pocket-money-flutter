@@ -8,7 +8,7 @@ class DayItem {
   DayItem(this.date, this.items);
   int get amount {
     int f = 0;
-    items?.forEach((item) {
+    items.forEach((item) {
       f += item.amount;
     });
     return f;

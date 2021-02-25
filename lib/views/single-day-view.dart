@@ -7,17 +7,26 @@ import 'package:pocket_money/view-models/index.dart';
 import 'package:pocket_money/utils/index.dart';
 import 'package:pocket_money/views/insert-cost-view.dart';
 
+import '../constant.dart';
+
 typedef OnItemPressed = void Function(CostItem);
+
+class SingleDayArrguments {
+  final DateTime date;
+  final String tag;
+
+  SingleDayArrguments(this.date, this.tag);
+}
 
 class SingleDayView extends StatefulWidget {
   static const route = 'SingleDayView';
 
-  final DateTime date;
+  final SingleDayArrguments args;
 
-  SingleDayView({this.date, Key key}) : super(key: key);
+  SingleDayView({required this.args, Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => SingleDayState(date);
+  State<StatefulWidget> createState() => SingleDayState(this.args.date);
 }
 
 class SingleDayState extends State<SingleDayView> {
@@ -73,7 +82,7 @@ class SingleDayState extends State<SingleDayView> {
                   child: Text(
                     cost.type.name,
                     textAlign: TextAlign.left,
-                    style: Theme.of(context).textTheme.headline6.copyWith(
+                    style: Theme.of(context).textTheme.headline6?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                   ),
@@ -95,7 +104,7 @@ class SingleDayState extends State<SingleDayView> {
                   alignment: Alignment.topRight,
                   child: Text(
                     cost.amount.toString(),
-                    style: Theme.of(context).textTheme.bodyText2.copyWith(
+                    style: Theme.of(context).textTheme.bodyText2?.copyWith(
                           color: Theme.of(context).accentColor,
                         ),
                   ),
@@ -152,7 +161,7 @@ class SingleDayState extends State<SingleDayView> {
             Spacer(),
             Text(
               total.toString(),
-              style: Theme.of(context).textTheme.headline5.copyWith(
+              style: Theme.of(context).textTheme.headline5?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).accentColor,
                   ),
@@ -171,10 +180,13 @@ class SingleDayState extends State<SingleDayView> {
         title: Text(date.toYYYYMMDD()),
       ),
       body: SimpleScrollView(
-        child: Container(
-          padding: EdgeInsets.all(5),
-          child: Column(
-            children: children,
+        child: Hero(
+          tag: widget.args.tag,
+          child: Container(
+            padding: EdgeInsets.all(5),
+            child: Column(
+              children: children,
+            ),
           ),
         ),
       ),

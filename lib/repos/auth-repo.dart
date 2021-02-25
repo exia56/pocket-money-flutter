@@ -5,7 +5,7 @@ import 'package:pocket_money/utils/logger.dart';
 
 class User {
   final String id;
-  User({this.id});
+  User({required this.id});
 }
 
 const UserIdKey = 'UserId';
@@ -15,12 +15,10 @@ class AuthRepo {
   final _logger = createLogger(diKey);
   final FirebaseAuth _firebaseAuth;
 
-  User cacheUser;
-
   AuthRepo(FirebaseApp app)
       : _firebaseAuth = FirebaseAuth.instanceFor(app: app);
 
-  Future<User> isUserSignIn() async {
+  Future<User?> isUserSignIn() async {
     if (_firebaseAuth.currentUser == null) return null;
     final user = _firebaseAuth.currentUser;
     _logger.i({
@@ -28,16 +26,14 @@ class AuthRepo {
       'msg': 'user is signed In',
       'isAnonymous': user.isAnonymous
     });
-    cacheUser = User(id: user.uid);
-    return cacheUser;
+    return User(id: user.uid);
   }
 
   Future<User> signInUser(String email, String password) async {
     try {
       final user = await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-      cacheUser = User(id: user.user.uid);
-      return cacheUser;
+      return User(id: user.user.uid);
     } on FirebaseAuthException catch (err) {
       _logger.e({'email': email}, err, err.stackTrace);
       if (err.code == 'user-not-found') {
@@ -46,9 +42,12 @@ class AuthRepo {
         throw WrongPasswordException();
       }
       throw UnknownException();
-    } catch (err) {
-      _logger.e({'fn': 'signInUser-unknown error', 'email': email}, err,
-          err.stackTrace);
+    } catch (err, stackTrace) {
+      _logger.e(
+        {'fn': 'signInUser-unknown error', 'email': email},
+        err,
+        stackTrace,
+      );
       throw UnknownException();
     }
   }
@@ -57,18 +56,25 @@ class AuthRepo {
     try {
       final user = await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
-      cacheUser = User(id: user.user.uid);
-      return cacheUser;
+      return User(id: user.user.uid);
     } on FirebaseAuthException catch (err) {
-      _logger.e(err);
+      _logger.e(
+        {'fn': 'signUpUser error', 'email': email},
+        err,
+        err.stackTrace,
+      );
       if (err.code == 'weak-password') {
         throw WeakPasswordException();
       } else if (err.code == 'email-already-in-use') {
         throw EmailAlreadyUsedException();
       }
       throw UnknownException();
-    } catch (err) {
-      _logger.e(err);
+    } catch (err, stackTrace) {
+      _logger.e(
+        {'fn': 'signUpUser-unknown', 'email': email},
+        err,
+        stackTrace,
+      );
       throw UnknownException();
     }
   }
@@ -77,11 +83,11 @@ class AuthRepo {
     try {
       final a = _firebaseAuth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (err) {
-      _logger.e(err);
-
+      _logger.e({'fn': 'resetPassword', 'email': email}, err, err.stackTrace);
       throw UnknownException(message: err.code);
-    } catch (err) {
-      _logger.e(err);
+    } catch (err, stackTrace) {
+      _logger
+          .e({'fn': 'resetPassword-unknown', 'email': email}, err, stackTrace);
       throw UnknownException();
     }
   }

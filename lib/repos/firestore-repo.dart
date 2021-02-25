@@ -27,7 +27,7 @@ class FirestoreRepo {
     }).toList();
   }
 
-  Future<Map<String, dynamic>> _query(
+  Future<Map<String, dynamic>?> _query(
     String userId,
     String docPath,
   ) async {
@@ -53,8 +53,11 @@ class FirestoreRepo {
     return result.map((map) => CostItem.fromMap(map)).toList();
   }
 
-  Future<CostItem> getCost(String userId, String id) async {
+  Future<CostItem?> getCost(String userId, String id) async {
     final cost = await _query(userId, id);
+    if (cost == null) {
+      return null;
+    }
     return CostItem.fromMap(cost);
   }
 

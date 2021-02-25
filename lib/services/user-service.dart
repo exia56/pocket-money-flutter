@@ -7,7 +7,7 @@ class UserService {
   final _logger = createLogger(diKey);
   UserService(this._authRepo);
 
-  Future<User> isUserSignedIn() async {
+  Future<User?> isUserSignedIn() async {
     return await _authRepo.isUserSignIn();
   }
 

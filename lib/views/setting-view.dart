@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pocket_money/di.dart';
 import 'package:pocket_money/services/index.dart';
 
-Widget settingRow(String str, Function onPress) {
-  return FlatButton(
+Widget settingRow(String str, void Function() onPress) {
+  return TextButton(
     onPressed: onPress,
     child: Row(
       children: [

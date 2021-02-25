@@ -22,10 +22,10 @@ class MainViewModel {
     // final futureGroup = List<int>.generate(10, (index) => index).map((e) {
     //   final date = DateTime.now().subtract(new Duration(days: e));
     //   return _costsService.updateOrInsertCost(CostItem.fromMap({
-    //     'amount': randomInt(10000),
+    //     'amount': randomInt(200),
     //     'dateStamp': date.toDateStamp(),
     //     'day': date.day,
-    //     'detail': dateFormator.format(date) + '\ndetail\n1\n2\n3',
+    //     'detail': dateFormator.format(date) + '\nlalala\n2\n3',
     //     'month': date.month - 1,
     //     'type': 1,
     //     'year': date.year,

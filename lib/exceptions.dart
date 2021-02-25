@@ -1,5 +1,5 @@
 class CustomException implements Exception {
-  String _message;
+  late String _message;
 
   @override
   String toString() {
@@ -37,8 +37,7 @@ class NotSignInException extends CustomException {
 
 class WrongCostTypeException extends CustomException {
   final int _type;
-  String _message;
-  WrongCostTypeException(this._type) {
-    _message = 'Error: Wrong Cost Type ${_type.toString()}';
-  }
+  final String _message;
+  WrongCostTypeException(this._type)
+      : _message = 'Error: Wrong Cost Type ${_type.toString()}';
 }

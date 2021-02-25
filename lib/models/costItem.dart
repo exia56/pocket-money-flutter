@@ -2,7 +2,7 @@ import 'package:pocket_money/constant.dart';
 import 'package:pocket_money/utils/index.dart';
 
 class CostItem {
-  String id;
+  String? id;
   int amount;
   int dateStamp;
   int day;
@@ -22,17 +22,18 @@ class CostItem {
     this.year,
   );
 
-  CostItem.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
-    amount = tryCastToInt(map['amount']);
-    dateStamp = tryCastToInt(map['dateStamp']);
-    day = tryCastToInt(map['day']);
-    detail = map['detail'];
-    month = tryCastToInt(map['month']);
-    type = map['type'] is CostType
+  factory CostItem.fromMap(Map<String, dynamic> map) {
+    final id = map['id'];
+    final amount = tryCastToInt(map['amount']);
+    final dateStamp = tryCastToInt(map['dateStamp']);
+    final day = tryCastToInt(map['day']);
+    final detail = map['detail'];
+    final month = tryCastToInt(map['month']);
+    final type = map['type'] is CostType
         ? map['type']
         : costTypeFrom(tryCastToInt(map['type']));
-    year = tryCastToInt(map['year']);
+    final year = tryCastToInt(map['year']);
+    return CostItem(id, amount, dateStamp, day, detail, month, type, year);
   }
 
   @override
