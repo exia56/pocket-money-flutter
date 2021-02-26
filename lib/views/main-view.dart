@@ -50,6 +50,11 @@ class MainViewState extends State<MainView> {
     mainViewModel.getDateFees(showDate);
   }
 
+  void updateShowDate(DateTime date) {
+    showDate = date;
+    mainViewModel.getDateFees(date);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,14 +91,20 @@ class MainViewState extends State<MainView> {
                         children: [
                           Expanded(
                             flex: 1,
-                            child: Align(
-                              alignment: Alignment.center,
+                            // child: Align(
+                            //   alignment: Alignment.center,
+                            child: InkWell(
+                              onTap: () => updateShowDate(DateTime(
+                                  showDate.year,
+                                  showDate.month - 1,
+                                  showDate.day)),
                               child: Icon(
                                 Icons.chevron_left,
                                 size: 30,
                                 color: Theme.of(context).accentColor,
                               ),
                             ),
+                            // ),
                           ),
                           Expanded(
                             flex: 5,
@@ -107,12 +118,18 @@ class MainViewState extends State<MainView> {
                           ),
                           Expanded(
                             flex: 1,
-                            child: Align(
-                              alignment: Alignment.center,
+                            // child: Align(
+                            //   alignment: Alignment.center,
+                            child: InkWell(
+                              onTap: () => updateShowDate(DateTime(
+                                  showDate.year,
+                                  showDate.month + 1,
+                                  showDate.day)),
                               child: Icon(
                                 Icons.chevron_right,
                                 color: Theme.of(context).accentColor,
                               ),
+                              // ),
                             ),
                           ),
                         ],
