@@ -13,9 +13,8 @@ typedef OnItemPressed = void Function(CostItem);
 
 class SingleDayArrguments {
   final DateTime date;
-  final String tag;
 
-  SingleDayArrguments(this.date, this.tag);
+  SingleDayArrguments(this.date);
 }
 
 class SingleDayView extends StatefulWidget {
@@ -180,13 +179,10 @@ class SingleDayState extends State<SingleDayView> {
         title: Text(date.toYYYYMMDD()),
       ),
       body: SimpleScrollView(
-        child: Hero(
-          tag: widget.args.tag,
-          child: Container(
-            padding: EdgeInsets.all(5),
-            child: Column(
-              children: children,
-            ),
+        child: Container(
+          padding: EdgeInsets.all(5),
+          child: Column(
+            children: children,
           ),
         ),
       ),

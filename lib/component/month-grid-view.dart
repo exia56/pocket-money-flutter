@@ -56,7 +56,6 @@ Widget todayText(String str) {
 Widget weekdayCell(
   DayItem data,
   OnCellPressedHandler handler,
-  String heroTag,
 ) {
   final isWeekend = data.date.weekday == DateTime.sunday ||
       data.date.weekday == DateTime.saturday;
@@ -64,29 +63,24 @@ Widget weekdayCell(
   var amountStr = data.amount > 1000
       ? '${(data.amount ~/ 1000)}k'
       : data.amount.toInt().toString();
-  final child = Container(
-    padding: EdgeInsets.all(5),
-    child: Column(
-      children: [
-        Align(
-            alignment: Alignment.topLeft,
-            child: isToday
-                ? todayText(data.date.day.toString())
-                : isWeekend
-                    ? weekendText(data.date.day.toString())
-                    : normalText(data.date.day.toString())),
-        Align(alignment: Alignment.bottomRight, child: normalFee(amountStr)),
-      ],
-    ),
+  final child = Column(
+    children: [
+      Align(
+          alignment: Alignment.topLeft,
+          child: isToday
+              ? todayText(data.date.day.toString())
+              : isWeekend
+                  ? weekendText(data.date.day.toString())
+                  : normalText(data.date.day.toString())),
+      Align(alignment: Alignment.bottomRight, child: normalFee(amountStr)),
+    ],
   );
-  return Container(
-    decoration: BoxDecoration(border: Border.all(width: 1)),
-    child: InkWell(
-      onTap: () => handler(SingleDayArrguments(data.date, heroTag)),
-      child: Hero(
-        tag: heroTag,
-        child: child,
-      ),
+  return InkWell(
+    onTap: () => handler(SingleDayArrguments(data.date)),
+    child: Container(
+      decoration: BoxDecoration(border: Border.all(width: 1)),
+      padding: EdgeInsets.all(5),
+      child: child,
     ),
   );
 }
@@ -122,8 +116,10 @@ Row weekCellAggregate(
     children: [
       ...datas
           .map((e) => Expanded(
-              child: weekdayCell(
-                  e, handler, 'row_${idx.toString()}_${e.date.toYYYYMMDD()}')))
+                  child: weekdayCell(
+                e,
+                handler,
+              )))
           .toList(),
     ],
   );

@@ -11,7 +11,6 @@ class MainViewModel {
 
   final _dayItemsController = StreamController<List<DayItem>>.broadcast();
   Stream<List<DayItem>> get dayItems => _dayItemsController.stream;
-  final dateFormator = DateFormat('yyyyMMdd');
 
   MainViewModel(this._costsService) {
     _dayItemsController.add([]);
@@ -19,13 +18,13 @@ class MainViewModel {
 
   void getDateFees(DateTime date) {
     final futureGroup = [Future(() => null)];
-    // final futureGroup = List<int>.generate(10, (index) => index).map((e) {
-    //   final date = DateTime.now().subtract(new Duration(days: e));
+    // final futureGroup = List<Future<void>>.generate(30, (index) {
+    //   final date = DateTime.now().subtract(new Duration(days: index));
     //   return _costsService.updateOrInsertCost(CostItem.fromMap({
     //     'amount': randomInt(200),
     //     'dateStamp': date.toDateStamp(),
     //     'day': date.day,
-    //     'detail': dateFormator.format(date) + '\nlalala\n2\n3',
+    //     'detail': date.toYYYYMMDD() + '測試1\n你測試2',
     //     'month': date.month - 1,
     //     'type': 1,
     //     'year': date.year,
