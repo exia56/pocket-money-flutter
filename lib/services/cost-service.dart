@@ -1,16 +1,14 @@
-import 'package:intl/intl.dart';
 import 'package:pocket_money/models/index.dart';
 import 'package:pocket_money/repos/index.dart';
 import 'package:pocket_money/utils/index.dart';
 
-final yyyyMMddFormator = DateFormat('yyyy-MM-dd');
-
 class CostService {
   static const diKey = 'CostService';
   final CostsRepo _costsRepo;
+  final FirestoreRepo _firestoreRepo;
   final _logger = createLogger(diKey);
 
-  CostService(this._costsRepo);
+  CostService(this._costsRepo, this._firestoreRepo);
 
   Future<List<DayItem>> getDailyCosts(DateTime date) async {
     var monthEndAt = DateTime(date.year, date.month + 1, 0);
@@ -65,5 +63,30 @@ class CostService {
 
   Future<void> deleteCost(String id) async {
     await _costsRepo.delete(id);
+  }
+
+  Future<void> syncToCloud(
+    String userId,
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
+    final costs = await _costsRepo.queryBetween(
+      startDate.toDateStamp(),
+      endDate.toDateStamp(),
+    );
+    await _firestoreRepo.updateOrInsertMany(userId, costs);
+  }
+
+  Future<void> pullFromCloud(
+    String userId,
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
+    final firestoreCosts = await _firestoreRepo.getCostsBetween(
+      userId,
+      startDate.toDateStamp(),
+      endDate.toDateStamp(),
+    );
+    await _costsRepo.updateOrInsertMany(firestoreCosts);
   }
 }

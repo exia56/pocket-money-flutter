@@ -69,7 +69,6 @@ class MyApp extends StatelessWidget {
         SignUpView.route: (_) => SignUpView(),
         SignInView.route: (_) => SignInView(),
         MainView.route: (_) => MainView(),
-        SplashView.route: (_) => SplashView(),
         SettingView.route: (_) => SettingView(),
         SingleDayView.route: (context) {
           if (ModalRoute.of(context)?.settings.arguments == null) {
@@ -88,6 +87,14 @@ class MyApp extends StatelessWidget {
               ModalRoute.of(context)!.settings.arguments! as CostItem;
           return InsertCostView(args);
         },
+        SyncDataView.route: (context) {
+          if (ModalRoute.of(context)?.settings.arguments == null) {
+            throw NullThrownError();
+          }
+          final SyncViewParam args =
+              ModalRoute.of(context)!.settings.arguments! as SyncViewParam;
+          return SyncDataView(args);
+        }
       },
     );
   }

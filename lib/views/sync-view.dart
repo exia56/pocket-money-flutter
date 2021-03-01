@@ -1,114 +1,176 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_money/component/modal.dart';
 import 'package:pocket_money/di.dart';
+import 'package:pocket_money/repos/index.dart';
 import 'package:pocket_money/view-models/index.dart';
-import 'package:pocket_money/utils/logger.dart';
-import 'package:pocket_money/views/index.dart';
+import 'package:pocket_money/utils/index.dart';
+
+class SyncViewParam {
+  final User user;
+
+  SyncViewParam(this.user);
+}
 
 class SyncDataView extends StatefulWidget {
   static const route = 'SyncDataView';
+
+  final User user;
+
+  SyncDataView(SyncViewParam param) : user = param.user;
 
   @override
   State<StatefulWidget> createState() => SyncDataState();
 }
 
-Widget _rowCreation(String field, TextEditingController controller) {
-  return Padding(
-    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-    child: Row(
-      children: [
-        Expanded(
-          flex: 0,
-          child: Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            child: Text(field),
-          ),
-        ),
-        Expanded(
-          flex: 3,
-          child: Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            child: TextField(
-              controller: controller,
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-class SyncDataState extends State<SyncDataView> {
-  final _userViewModel = DI.instance.get<UserViewModel>(UserViewModel.diKey);
-  final _logger = createLogger('SyncDataState');
-
-  var _error = '';
+class SyncDataState extends StateWithOverlay<SyncDataView> {
+  final _syncViewModel = DI.instance.get<SyncViewModel>(SyncViewModel.diKey);
+  final _logger = createLogger(SyncDataView.route);
 
   @override
   void initState() {
     super.initState();
-    _userViewModel.error.listen((error) {
+    _syncViewModel.error.listen((error) {
       _logger.i('error: $error');
-      setState(() {
-        _error = error;
-      });
+      // setState(() {
+      //   _error = error;
+      // });
     });
+    _syncViewModel.loading.listen((loading) {
+      if (loading) {
+        showOverlay();
+      } else {
+        hideOverlay();
+      }
+    });
+  }
+
+  Widget _rowCreation(Widget title, Widget value) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 1,
+            child: title,
+          ),
+          Expanded(
+            flex: 4,
+            child: value,
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget childBuilder() {
+    return Center(
+      child: CircularProgressIndicator(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final children = <Widget>[
-      _rowCreation('郵箱', _userViewModel.emailTextEditingController),
-      _rowCreation('密碼', _userViewModel.passwordTextEditingController),
-    ];
-    if (_error.length != 0) {
-      children.insert(
-        children.length,
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 5),
-          child: Text(
-            _error,
-            style: TextStyle(
-              color: Colors.red,
-            ),
-          ),
-        ),
-      );
-    }
-    children.insert(
-      children.length,
-      Padding(
-        padding: EdgeInsets.symmetric(vertical: 5),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            FlatButton(
-              child: Text('去註冊'),
-              onPressed: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    SignUpView.route, (route) => false);
-              },
-            ),
-            RaisedButton(
-              child: Text('登入'),
-              onPressed: () {
-                _userViewModel.signIn();
-              },
-            ),
-          ],
-        ),
-      ),
-    );
     return Scaffold(
       appBar: AppBar(
-        title: Text('登入'),
+        title: Text('備份'),
       ),
       body: Container(
         padding: EdgeInsets.all(5),
-        child: Column(
-          children: children,
-        ),
+        child: StreamBuilder<SyncParam>(builder: (context, asyncSnapshot) {
+          final value = asyncSnapshot.data ??
+              SyncParam(
+                start: DateTime.now().subtract(Duration(days: 30)),
+                end: DateTime.now(),
+                toCloud: true,
+              );
+          return Column(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                margin: EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        'start: ',
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Text(
+                        value.start.toYYYYMMDD(),
+                        style: Theme.of(context).textTheme.bodyText2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                margin: EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        'end: ',
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Text(
+                        value.end.toYYYYMMDD(),
+                        style: Theme.of(context).textTheme.bodyText2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                margin: EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        'toCloud: ',
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Text(
+                        value.toCloud.toString(),
+                        style: Theme.of(context).textTheme.bodyText2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                child: asyncSnapshot.hasError
+                    ? Text(asyncSnapshot.error.toString())
+                    : null,
+              ),
+              Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      _syncViewModel.syncParamSink.add(value);
+                      _syncViewModel.syncData(widget.user);
+                    },
+                    child: Text('backup'),
+                  )
+                ],
+              ),
+            ],
+          );
+        }),
       ),
     );
   }
@@ -116,7 +178,6 @@ class SyncDataState extends State<SyncDataView> {
   @override
   void dispose() {
     super.dispose();
-    _userViewModel.signOut();
-    _userViewModel.dispose();
+    _syncViewModel.dispose();
   }
 }

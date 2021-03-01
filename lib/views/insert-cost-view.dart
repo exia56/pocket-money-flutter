@@ -60,19 +60,17 @@ class InsertCostState extends State<InsertCostView> {
           Expanded(
             flex: 1,
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-              child: Center(
-                child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.bodyText2,
-                ),
+              padding: EdgeInsets.all(10),
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.bodyText2,
               ),
             ),
           ),
           Expanded(
             flex: 4,
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade400),
                 borderRadius: BorderRadius.all(Radius.circular(4)),
@@ -181,11 +179,14 @@ class InsertCostState extends State<InsertCostView> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    TextButton.icon(
+                    ElevatedButton.icon(
                       icon: Icon(isInsert ? Icons.add : Icons.edit),
                       label: Text(
                         isInsert ? '新增' : '修改',
-                        style: Theme.of(context).textTheme.bodyText2,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1
+                            ?.copyWith(color: Colors.white),
                       ),
                       onPressed: () {
                         _costViewModel.updateOrInsertCost(CostItem.fromMap({
@@ -202,11 +203,14 @@ class InsertCostState extends State<InsertCostView> {
                     ),
                     isInsert
                         ? Container()
-                        : TextButton.icon(
+                        : ElevatedButton.icon(
                             icon: Icon(Icons.delete),
                             label: Text(
                               '刪除',
-                              style: Theme.of(context).textTheme.bodyText2,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  ?.copyWith(color: Colors.white),
                             ),
                             onPressed: () {
                               if (cost != null && cost!.id != null) {
@@ -214,11 +218,14 @@ class InsertCostState extends State<InsertCostView> {
                               }
                             },
                           ),
-                    TextButton.icon(
+                    ElevatedButton.icon(
                       icon: Icon(Icons.cancel),
                       label: Text(
                         '取消',
-                        style: Theme.of(context).textTheme.bodyText2,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1
+                            ?.copyWith(color: Colors.white),
                       ),
                       onPressed: () {
                         exit();

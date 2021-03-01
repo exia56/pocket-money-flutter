@@ -6,6 +6,8 @@ import 'package:pocket_money/view-models/index.dart';
 import 'package:pocket_money/view-models/user-view-model.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'repos/index.dart';
+
 const databaseDIKey = 'db';
 
 void diSetup(FirebaseApp firebaseApp, Database database) {
@@ -25,8 +27,15 @@ void diSetup(FirebaseApp firebaseApp, Database database) {
   );
   DI.instance.register(
     CostService.diKey,
-    ({required CostsRepo costsRepo}) => CostService(costsRepo),
-    namedParameter: {'costsRepo': CostsRepo.diKey},
+    ({required CostsRepo costsRepo, required FirestoreRepo firestoreRepo}) =>
+        CostService(
+      costsRepo,
+      firestoreRepo,
+    ),
+    namedParameter: {
+      'costsRepo': CostsRepo.diKey,
+      'firestoreRepo': FirestoreRepo.diKey,
+    },
   );
 
   DI.instance.register(
@@ -44,6 +53,12 @@ void diSetup(FirebaseApp firebaseApp, Database database) {
   DI.instance.register(
     CostViewModel.diKey,
     ({required CostService costService}) => CostViewModel(costService),
+    namedParameter: {'costService': CostService.diKey},
+    alwaysNew: true,
+  );
+  DI.instance.register(
+    SyncViewModel.diKey,
+    ({required CostService costService}) => SyncViewModel(costService),
     namedParameter: {'costService': CostService.diKey},
     alwaysNew: true,
   );
