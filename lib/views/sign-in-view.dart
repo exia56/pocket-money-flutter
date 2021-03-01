@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pocket_money/component/modal.dart';
 import 'package:pocket_money/di.dart';
+import 'package:pocket_money/repos/index.dart';
 import 'package:pocket_money/view-models/index.dart';
 import 'package:pocket_money/utils/logger.dart';
 import 'package:pocket_money/views/index.dart';
@@ -11,39 +14,14 @@ class SignInView extends StatefulWidget {
   State<StatefulWidget> createState() => SignInState();
 }
 
-Widget _rowCreation(String field, TextEditingController controller) {
-  return Padding(
-    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-    child: Row(
-      children: [
-        Expanded(
-          flex: 0,
-          child: Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            child: Text(field),
-          ),
-        ),
-        Expanded(
-          flex: 3,
-          child: Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            child: TextField(
-              controller: controller,
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-class SignInState extends State<SignInView> {
+class SignInState extends StateWithOverlay<SignInView> {
   final _userViewModel = DI.instance.get<UserViewModel>(UserViewModel.diKey);
-  final _logger = createLogger('SignInState');
+  final _logger = createLogger(SingleDayView.route);
 
   var _error = '';
+  User? user;
+
+  OverlayEntry? _overly;
 
   @override
   void initState() {
@@ -54,6 +32,53 @@ class SignInState extends State<SignInView> {
         _error = error;
       });
     });
+    _userViewModel.user.listen((user) async {
+      if (user != null) {
+        Navigator.of(context).pop(user);
+      }
+    });
+    _userViewModel.loading.listen((loading) {
+      if (loading) {
+        showOverlay();
+      } else {
+        hideOverlay();
+      }
+    });
+  }
+
+  @override
+  Widget childBuilder() {
+    return Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
+  Widget _rowCreation(String field, TextEditingController controller) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 0,
+            child: Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Text(field),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: TextField(
+                controller: controller,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -83,14 +108,15 @@ class SignInState extends State<SignInView> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            FlatButton(
-              child: Text('去註冊'),
-              onPressed: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    SignUpView.route, (route) => false);
-              },
-            ),
-            RaisedButton(
+            // TextButton(
+            //   child: Text('去註冊'),
+            //   onPressed: () async {
+            //     final a = await Navigator.of(context)
+            //         .pushReplacementNamed(SignUpView.route);
+            //     _logger.i(a.toString());
+            //   },
+            // ),
+            ElevatedButton(
               child: Text('登入'),
               onPressed: () {
                 _userViewModel.signIn();

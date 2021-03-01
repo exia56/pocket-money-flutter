@@ -53,6 +53,13 @@ class SignUpState extends State<SignUpView> {
         _error = error;
       });
     });
+    _userViewModel.user.listen((user) {
+      _userViewModel.user.listen((user) async {
+        if (user != null) {
+          Navigator.of(context).pop(user);
+        }
+      });
+    });
   }
 
   @override
@@ -82,14 +89,13 @@ class SignUpState extends State<SignUpView> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            FlatButton(
+            TextButton(
               child: Text('去登入'),
               onPressed: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    SignInView.route, (route) => false);
+                Navigator.of(context).pushReplacementNamed(SignInView.route);
               },
             ),
-            RaisedButton(
+            TextButton(
               child: Text('註冊'),
               onPressed: () {
                 _userViewModel.signUp();
