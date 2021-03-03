@@ -178,6 +178,17 @@ class SingleDayState extends State<SingleDayView> {
       appBar: AppBar(
         title: Text(date.toYYYYMMDD()),
       ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () async {
+          await Navigator.of(context).pushNamed(
+            InsertCostView.route,
+            arguments:
+                CostItem.fromMap({'dateStamp': date.toDateStamp(), 'type': 1}),
+          );
+          _costViewModel.querySingleDayCost(date);
+        },
+      ),
       body: SimpleScrollView(
         child: Container(
           padding: EdgeInsets.all(5),

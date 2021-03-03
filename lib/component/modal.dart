@@ -8,22 +8,25 @@ abstract class StateWithOverlay<T extends StatefulWidget> extends State<T> {
 
   @protected
   void showOverlay() {
-    this._overly?.remove();
+    hideOverlay();
     this._overly = OverlayEntry(
-        builder: (context) => Material(
-              elevation: 4.0,
-              type: MaterialType.transparency,
-              child: Container(
-                decoration: BoxDecoration(color: Colors.black.withOpacity(0.2)),
-                child: childBuilder(),
-              ),
-            ));
+      builder: (context) => Material(
+        elevation: 4.0,
+        type: MaterialType.transparency,
+        child: Container(
+          decoration: BoxDecoration(color: Colors.black.withOpacity(0.2)),
+          child: childBuilder(),
+        ),
+      ),
+    );
     Overlay.of(context)?.insert(this._overly!);
   }
 
   @protected
   void hideOverlay() {
-    this._overly?.remove();
+    if (this._overly != null) {
+      this._overly!.remove();
+    }
   }
 
   @protected

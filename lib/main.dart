@@ -80,11 +80,8 @@ class MyApp extends StatelessWidget {
           return SingleDayView(args: args!);
         },
         InsertCostView.route: (context) {
-          if (ModalRoute.of(context)?.settings.arguments == null) {
-            throw NullThrownError();
-          }
-          final CostItem args =
-              ModalRoute.of(context)!.settings.arguments! as CostItem;
+          final CostItem? args =
+              ModalRoute.of(context)!.settings.arguments as CostItem?;
           return InsertCostView(args);
         },
         SyncDataView.route: (context) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_money/component/datetime-picker.dart';
 import 'package:pocket_money/component/index.dart';
 import 'package:pocket_money/constant.dart';
 import 'package:pocket_money/di.dart';
@@ -9,7 +10,7 @@ import 'package:pocket_money/models/index.dart';
 class InsertCostView extends StatefulWidget {
   static const route = 'InsertCostView';
 
-  final CostItem cost;
+  final CostItem? cost;
 
   InsertCostView(this.cost);
 
@@ -99,28 +100,14 @@ class InsertCostState extends State<InsertCostView> {
           child: Column(
             children: [
               _rowCreation(
-                '日期:',
-                InkWell(
-                  onTap: () async {
-                    final newDate = await showDatePicker(
-                      context: context,
-                      initialDate: date,
-                      firstDate:
-                          DateTime.now().subtract(Duration(days: 2 * 365)),
-                      lastDate: DateTime.now().add(Duration(days: 7)),
-                    );
-                    if (newDate != null) {
-                      setState(() {
-                        date = newDate;
-                      });
-                    }
-                  },
-                  child: Text(
-                    date.toYYYYMMDD(),
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
-                ),
-              ),
+                  '日期:',
+                  DateTimePicker(
+                      currentDate: date,
+                      onDatePicked: (newDate) {
+                        setState(() {
+                          date = newDate;
+                        });
+                      })),
               _rowCreation(
                   '種類:',
                   DropdownButton<CostType>(

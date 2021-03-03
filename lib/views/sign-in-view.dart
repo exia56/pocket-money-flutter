@@ -44,6 +44,7 @@ class SignInState extends StateWithOverlay<SignInView> {
         hideOverlay();
       }
     });
+    _userViewModel.isUserSignIn();
   }
 
   @override

@@ -72,7 +72,7 @@ class FirestoreRepo {
   Future<void> updateOrInsertMany(String userId, List<CostItem> items) async {
     final futures = items.map(
       (item) => updateOrInsert(userId, item).catchError(
-        (Exception err) => _logger.e(
+        (err) => _logger.e(
           item,
           err,
           StackTrace.current,

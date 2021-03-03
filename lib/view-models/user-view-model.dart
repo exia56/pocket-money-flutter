@@ -22,6 +22,13 @@ class UserViewModel {
 
   UserViewModel(this._userService);
 
+  void isUserSignIn() async {
+    _loadingController.add(true);
+    final user = await _userService.isUserSignedIn();
+    _userController.add(user);
+    _loadingController.add(false);
+  }
+
   void signIn() {
     _loadingController.add(true);
     final email = emailTextEditingController.text;

@@ -3,30 +3,6 @@ import 'package:pocket_money/utils/index.dart';
 import 'package:pocket_money/repos/index.dart';
 import 'package:pocket_money/services/index.dart';
 
-class SyncParam {
-  final DateTime start;
-  final DateTime end;
-  final bool toCloud;
-
-  SyncParam({
-    required this.start,
-    required this.end,
-    required this.toCloud,
-  });
-
-  SyncParam clone({
-    DateTime? start,
-    DateTime? end,
-    bool? toCloud,
-  }) {
-    return SyncParam(
-      start: start ?? this.start,
-      end: end ?? this.end,
-      toCloud: toCloud ?? this.toCloud,
-    );
-  }
-}
-
 class SyncViewModel {
   static const diKey = 'SyncViewModel';
   final CostService _costService;
@@ -42,29 +18,29 @@ class SyncViewModel {
   final _resultController = StreamController<bool>.broadcast();
   Stream<bool> get result => _resultController.stream;
 
-  final _syncParamController = StreamController<SyncParam>.broadcast();
-  Stream<SyncParam> get syncParamSteam => _syncParamController.stream;
-  Sink<SyncParam> get syncParamSink => _syncParamController.sink;
-
   SyncViewModel(this._costService);
 
-  Future<void> syncData(User user) async {
+  Future<void> syncData(
+    User user,
+    DateTime startDate,
+    DateTime endDate,
+    bool toCloud,
+  ) async {
     _loadingController.add(true);
-    SyncParam? data;
     try {
-      _logger.d({
-        'user':user.id
-      });
-      data = await syncParamSteam.last;
-      _logger.d({
-        'start': data.start,
-        'end': data.end,
-        'toCloud': data.toCloud,
-        'user': user.id,
-      });
+      if (toCloud) {
+        await _costService.syncToCloud(user.id, startDate, endDate);
+      } else {
+        await _costService.pullFromCloud(user.id, startDate, endDate);
+      }
+      _resultController.add(true);
     } catch (err, stackTrance) {
-      _logger.e({'data': data}, err, stackTrance);
-      _syncParamController.addError(err);
+      _logger.e({
+        'start': startDate.toYYYYMMDD(),
+        'end': endDate.toYYYYMMDD(),
+        'toCloud': toCloud,
+        'user': user.id,
+      }, err, stackTrance);
       _errController.add(err.toString());
     } finally {
       _loadingController.add(false);
@@ -73,6 +49,7 @@ class SyncViewModel {
 
   dispose() {
     _errController.close();
-    _syncParamController.close();
+    _loadingController.close();
+    _resultController.close();
   }
 }

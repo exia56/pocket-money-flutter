@@ -7,6 +7,8 @@ import 'package:pocket_money/utils/index.dart';
 import 'package:pocket_money/view-models/main-view-model.dart';
 import 'package:pocket_money/di.dart';
 import 'package:pocket_money/views/index.dart';
+import 'package:pocket_money/models/index.dart';
+import 'package:pocket_money/views/insert-cost-view.dart';
 
 import 'index.dart';
 
@@ -35,7 +37,10 @@ class MainViewState extends State<MainView> {
     mainViewModel.dayItems.listen((newDayItems) {
       int total = 0;
       newDayItems.forEach((dayItem) {
-        total += dayItem.amount;
+        if (showDate.year == dayItem.date.year &&
+            showDate.month == dayItem.date.month) {
+          total += dayItem.amount;
+        }
       });
       setState(() {
         dayItems = newDayItems;
@@ -65,14 +70,24 @@ class MainViewState extends State<MainView> {
             margin: EdgeInsets.only(right: 5),
             child: IconButton(
               padding: EdgeInsets.all(5),
-              onPressed: () =>
-                  Navigator.of(context).pushNamed(SettingView.route),
+              onPressed: () async {
+                await Navigator.of(context).pushNamed(SettingView.route);
+                mainViewModel.getDateFees(showDate);
+              },
               icon: Icon(
                 Icons.settings,
               ),
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          Navigator.of(context).pushNamed(
+            InsertCostView.route,
+          );
+        },
       ),
       body: SimpleScrollView(
         child: Container(
@@ -91,20 +106,20 @@ class MainViewState extends State<MainView> {
                         children: [
                           Expanded(
                             flex: 1,
-                            // child: Align(
-                            //   alignment: Alignment.center,
                             child: InkWell(
                               onTap: () => updateShowDate(DateTime(
                                   showDate.year,
                                   showDate.month - 1,
                                   showDate.day)),
-                              child: Icon(
-                                Icons.chevron_left,
-                                size: 30,
-                                color: Theme.of(context).accentColor,
+                              child: Container(
+                                padding: EdgeInsets.all(5),
+                                child: Icon(
+                                  Icons.chevron_left,
+                                  size: 30,
+                                  color: Theme.of(context).accentColor,
+                                ),
                               ),
                             ),
-                            // ),
                           ),
                           Expanded(
                             flex: 5,
@@ -112,24 +127,24 @@ class MainViewState extends State<MainView> {
                               alignment: Alignment.center,
                               child: Text(
                                 dateFormator.format(showDate),
-                                style: Theme.of(context).textTheme.bodyText1,
+                                style: Theme.of(context).textTheme.headline5,
                               ),
                             ),
                           ),
                           Expanded(
                             flex: 1,
-                            // child: Align(
-                            //   alignment: Alignment.center,
                             child: InkWell(
                               onTap: () => updateShowDate(DateTime(
                                   showDate.year,
                                   showDate.month + 1,
                                   showDate.day)),
-                              child: Icon(
-                                Icons.chevron_right,
-                                color: Theme.of(context).accentColor,
+                              child: Container(
+                                padding: EdgeInsets.all(5),
+                                child: Icon(
+                                  Icons.chevron_right,
+                                  color: Theme.of(context).accentColor,
+                                ),
                               ),
-                              // ),
                             ),
                           ),
                         ],
