@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:pocket_money/component/index.dart';
 import 'package:pocket_money/component/month-grid-view.dart';
@@ -7,7 +8,6 @@ import 'package:pocket_money/utils/index.dart';
 import 'package:pocket_money/view-models/main-view-model.dart';
 import 'package:pocket_money/di.dart';
 import 'package:pocket_money/views/index.dart';
-import 'package:pocket_money/models/index.dart';
 import 'package:pocket_money/views/insert-cost-view.dart';
 
 import 'index.dart';
@@ -30,6 +30,8 @@ class MainViewState extends State<MainView> {
   int monthlyCost = 0;
   DateTime showDate = DateTime.now();
   final dateFormator = DateFormat('yyyy-MM');
+  final scrollController = ScrollController();
+  bool fabVisible = true;
 
   @override
   void initState() {
@@ -48,6 +50,25 @@ class MainViewState extends State<MainView> {
       });
     });
     mainViewModel.getDateFees(showDate);
+    scrollController.addListener(() {
+      _logger.d({
+        'direction': scrollController.position.userScrollDirection.toString(),
+        'event': 'main scroll controller event'
+      });
+      if (scrollController.position.userScrollDirection ==
+              ScrollDirection.reverse &&
+          fabVisible == true) {
+        setState(() {
+          fabVisible = false;
+        });
+      } else if (scrollController.position.userScrollDirection ==
+              ScrollDirection.forward &&
+          fabVisible == false) {
+        setState(() {
+          fabVisible = true;
+        });
+      }
+    });
   }
 
   void onCellPress(SingleDayArrguments args) async {
@@ -81,15 +102,18 @@ class MainViewState extends State<MainView> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.of(context).pushNamed(
-            InsertCostView.route,
-          );
-        },
+      floatingActionButton: Visibility(
+        visible: fabVisible,
+        child: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () async {
+            await Navigator.of(context).pushNamed(InsertCostView.route);
+            mainViewModel.getDateFees(showDate);
+          },
+        ),
       ),
       body: SimpleScrollView(
+        controller: scrollController,
         child: Container(
           padding: EdgeInsets.all(10),
           child: dayItems.length != 42

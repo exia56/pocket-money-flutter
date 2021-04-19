@@ -12,14 +12,19 @@ class CostService {
 
   Future<List<DayItem>> getDailyCosts(DateTime date) async {
     var monthEndAt = DateTime(date.year, date.month + 1, 0);
-    var startWeekday = monthEndAt.weekday;
-    var endWeekdayOffset = DateTime.sunday - startWeekday;
+    var endAtWeekday = monthEndAt.weekday % 7;
+    var endWeekdayOffset = DateTime.saturday - endAtWeekday;
 
     var gridViewEndDate = monthEndAt.add(Duration(days: endWeekdayOffset));
     var gridViewStartDate = gridViewEndDate.add(Duration(days: -41));
 
     final result = await _costsRepo.queryBetween(
         gridViewStartDate.toDateStamp(), gridViewEndDate.toDateStamp());
+
+    _logger.d({
+      'start': gridViewStartDate.toDateStamp(),
+      'end': gridViewEndDate.toDateStamp()
+    });
 
     final dateStampMap = <int, List<CostItem>>{};
     result.forEach((cost) {

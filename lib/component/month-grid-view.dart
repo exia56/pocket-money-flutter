@@ -114,8 +114,16 @@ Row headerAggregate(List<String> weekStrs) {
   final commonPadding = EdgeInsets.symmetric(horizontal: 10, vertical: 5);
   return Row(
     children: [
+      Expanded(
+        child: Padding(
+          padding: commonPadding,
+          child: Center(
+            child: weekendText(weekStrs[0]),
+          ),
+        ),
+      ),
       ...weekStrs
-          .sublist(0, 5)
+          .sublist(1, 5)
           .map(
             (e) => Expanded(
               child: Padding(
@@ -127,14 +135,6 @@ Row headerAggregate(List<String> weekStrs) {
             ),
           )
           .toList(),
-      Expanded(
-        child: Padding(
-          padding: commonPadding,
-          child: Center(
-            child: weekendText(weekStrs[5]),
-          ),
-        ),
-      ),
       Expanded(
         child: Padding(
           padding: commonPadding,
@@ -167,7 +167,7 @@ Row weekCellAggregate(
 }
 
 class MonthGridView extends StatelessWidget {
-  final List<String> header = ['一', '二', '三', '四', '五', '六', '日'];
+  final List<String> header = ['日', '一', '二', '三', '四', '五', '六'];
   final List<DayItem> cellContent;
   final OnCellPressedHandler _onCellPressedHandler;
   MonthGridView(this.cellContent, this._onCellPressedHandler, {Key? key})

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:pocket_money/component/index.dart';
 import 'package:pocket_money/di.dart';
 import 'package:pocket_money/constant.dart';
@@ -34,9 +35,10 @@ class SingleDayState extends State<SingleDayView> {
 
   var _error = '';
 
+  bool fabVisible = true;
   DateTime date;
-
   List<CostItem> costItems = [];
+  ScrollController scrollController = ScrollController();
 
   SingleDayState(this.date);
 
@@ -55,6 +57,21 @@ class SingleDayState extends State<SingleDayView> {
       });
     });
     _costViewModel.querySingleDayCost(date);
+    scrollController.addListener(() {
+      if (scrollController.position.userScrollDirection ==
+              ScrollDirection.reverse &&
+          fabVisible == true) {
+        setState(() {
+          fabVisible = false;
+        });
+      } else if (scrollController.position.userScrollDirection ==
+              ScrollDirection.forward &&
+          fabVisible == false) {
+        setState(() {
+          fabVisible = true;
+        });
+      }
+    });
   }
 
   void onItemPressed(CostItem item) async {
@@ -178,18 +195,22 @@ class SingleDayState extends State<SingleDayView> {
       appBar: AppBar(
         title: Text(date.toYYYYMMDD()),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () async {
-          await Navigator.of(context).pushNamed(
-            InsertCostView.route,
-            arguments:
-                CostItem.fromMap({'dateStamp': date.toDateStamp(), 'type': 1}),
-          );
-          _costViewModel.querySingleDayCost(date);
-        },
+      floatingActionButton: Visibility(
+        visible: fabVisible,
+        child: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () async {
+            await Navigator.of(context).pushNamed(
+              InsertCostView.route,
+              arguments: CostItem.fromMap(
+                  {'dateStamp': date.toDateStamp(), 'type': 1}),
+            );
+            _costViewModel.querySingleDayCost(date);
+          },
+        ),
       ),
       body: SimpleScrollView(
+        controller: scrollController,
         child: Container(
           padding: EdgeInsets.all(5),
           child: Column(
