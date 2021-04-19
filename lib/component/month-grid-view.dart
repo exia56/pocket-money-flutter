@@ -77,7 +77,7 @@ Widget weekdayCell(
   final isWeekend = data.date.weekday == DateTime.sunday ||
       data.date.weekday == DateTime.saturday;
   final isToday = data.date.toDateStamp() == DateTime.now().toDateStamp();
-  var amountStr = data.amount == 0
+  var amountStr = data.items.length == 0
       ? ''
       : data.amount > 1000
           ? '${(data.amount ~/ 1000)}k'
@@ -123,7 +123,7 @@ Row headerAggregate(List<String> weekStrs) {
         ),
       ),
       ...weekStrs
-          .sublist(1, 5)
+          .sublist(1, 6)
           .map(
             (e) => Expanded(
               child: Padding(

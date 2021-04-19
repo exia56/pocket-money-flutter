@@ -84,7 +84,7 @@ class SyncDataState extends StateWithOverlay<SyncDataView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('備份'),
+        title: Text(_toCloud ? '備份' : '還原'),
       ),
       body: Container(
         padding: EdgeInsets.all(5),
@@ -181,7 +181,7 @@ class SyncDataState extends StateWithOverlay<SyncDataView> {
                       _toCloud,
                     );
                   },
-                  child: Text('backup',
+                  child: Text(_toCloud ? 'backup' : 'pull',
                       style: Theme.of(context)
                           .textTheme
                           .bodyText1

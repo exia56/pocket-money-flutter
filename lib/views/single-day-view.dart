@@ -195,8 +195,9 @@ class SingleDayState extends State<SingleDayView> {
       appBar: AppBar(
         title: Text(date.toYYYYMMDD()),
       ),
-      floatingActionButton: Visibility(
-        visible: fabVisible,
+      floatingActionButton: AnimatedOpacity(
+        opacity: fabVisible ? 1.0 : 0.0,
+        duration: Duration(milliseconds: 500),
         child: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () async {
